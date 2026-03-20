@@ -10,11 +10,28 @@ import os
 # === 설정 ===
 st.set_page_config(page_title="Growth Creative Dashboard v4", layout="wide")
 
-# === 경로 ===
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-DATA_DIR = BASE_DIR / "outputs" / "processed"
+# === 경로 설정 (로컬 및 클라우드 배포 통합) ===
+CUR_DIR = Path(__file__).resolve().parent
+
+# 1. 데이터 디렉토리 설정
+# 루트에 있는 경우와 outputs/processed/ 에 있는 경우 모두 대응
+if (CUR_DIR / "outputs" / "processed").exists():
+    DATA_DIR = CUR_DIR / "outputs" / "processed"
+elif (CUR_DIR.parent.parent / "outputs" / "processed").exists():
+    DATA_DIR = CUR_DIR.parent.parent / "outputs" / "processed"
+else:
+    # 깃허브 루트에 파일이 직접 있는 경우
+    DATA_DIR = CUR_DIR
+
 CLEANED_DATA_PATH = DATA_DIR / "kakao_cleaned.csv"
-MEMO_PATH = BASE_DIR / "marketing" / "dashboards" / "memo.md"
+CACHE_PATH = DATA_DIR / "kakao_dashboard_final_v4.parquet"
+
+# 2. 메모 파일 경로 설정
+if (CUR_DIR / "memo.md").exists():
+    MEMO_PATH = CUR_DIR / "memo.md"
+else:
+    # 로컬 경로 (marketing/dashboards/memo.md)
+    MEMO_PATH = CUR_DIR / "memo.md" # 기본값은 현재 폴더
 
 # === 상수 ===
 NUM_COLS = ['cost', 'revenue', 'purchases', 'clicks', 'impressions', 'cart', 'option_comp']
