@@ -139,9 +139,7 @@ def load_v4_data_optimized():
     if CACHE_PATH.exists():
         return pd.read_parquet(CACHE_PATH)
     else:
-        st.error(f"데이터 파일({CACHE_PATH.name})을 찾을 수 없습니다.")
-        st.info(f"탐색 경로: {CACHE_PATH.absolute()}")
-        st.info(f"현재 작업 디렉토리: {os.getcwd()}")
+        st.error(f"데이터 파일({CACHE_PATH.name})을 찾을 수 없습니다. (경로: {CACHE_PATH.absolute()})")
         return pd.DataFrame()
 
 # === 지표 계산 엔진 ===
