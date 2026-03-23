@@ -1,0 +1,55 @@
+# 퍼포먼스 마케팅 리포트 구조 개선 플랜
+
+피드백 주신 내용을 바탕으로 리포트가 실제 "액션(Action) 발굴"에 가장 효율적으로 쓰일 수 있도록 전처리 스크립트와 리포트 가이드라인을 동시에 수정합니다. 
+
+## 요건 확정 사항 (User Confirmed)
+- **최소 집행 비용 기준**: 섹션 4(그룹별 성과)에서 누적 **1만 원 이상** 소진된 Ad Group만 대상에 포함하여 노이즈 제거.
+- **퍼널 데이터 활용**: 원본 데이터에 존재하는 `장바구니 담기 (App+Web)`, `completeProductOption (App+Web)` 데이터를 연동하여 `장바구니 CVR`, `옵션완료 CVR` 지표 추가 산출.
+
+## Proposed Changes
+
+### 1. 전처리 스크립트 수정 ([preprocess-airbridge.py](file:///c:/Users/ajh81/OneDrive/Desktop/joo-mkt/marketing/scripts/preprocess-airbridge.py))
+- **유형 명칭 변경**: `일반-UA` → `UA-일반` 기반 정렬 (상위 호환성 강화)
+- **신규 매체 및 초기 퍼널 지표 추가**:
+  - `CPC = cost_raw / clicks`
+  - `CTR = clicks / impressions * 100` 
+  - `가입 CPA = 보정비용 / 회원가입 (App+Web)` (UA 성과 진단용 핵심 지표)
+  - `가입 CVR = 회원가입 (App+Web) / clicks * 100`
+- **구매 하위 퍼널 연동 (Potential 발굴용)**: 
+  - `장바구니 CVR`, `옵션완료 CVR` 산출 로직 추가
+  - *그로스 인사이트*: 한국 이커머스 특성상 장바구니를 거치지 않는 '바로 구매' 비율이 상당하므로, **장바구니 CVR과 옵션완료 CVR의 합집합(OR 조건) 추세**를 보조 지표로 활용하여 Potential 발굴 정확도를 극대화.
+- **그룹 비용 비중 수식 추가**: 각 타겟유형(UA/RT) 내 해당 Ad Group이 소진한 비용의 점유율(`spend_share`) 계산
+- **최소 기준 필터 적용**: 누적 `1만 원 이상` 소진된 노이즈 데이터 배제
+
+### 💡 [NEW] 시니어 분석가 역제안 (Optional Add-ons)
+주형님의 "나머지 놓친 부분이 없는지" 묻는 시니어 레벨의 검증 요청에 따라, 대시보드 스케일업 및 액션 속도를 비약적으로 높여줄 **3가지 특수 로직**을 스크립트에 포함할 것을 제안합니다. (이번 스크립트 개편에 즉시 포함 가능)
+
+1. **최근 3일 ROAS 가속도(Velocity) 지표 추가**: 데일리 대응이 목표라면 '주간 평균'은 너무 늦습니다. 그룹별 데이터에 `최근 3일 ROAS 추세(▲▼)` 컬럼을 추가해, 주간 전체 ROAS는 500%로 양호해 보여도 최근 3일간 내리막을 걷고 있다면 조기 차단(Early Stop) 알럿을 리포트에 띄우도록 합니다.
+2. **Ad Group 타겟/상품명 자동 파싱 (대시보드화 사전 준비)**: 추후 Streamlit 대시보드 구축이 궁극적 목표라면 텍스트 덩어리인 애드그룹명(`male4070-2603_br_yezac-promotion`)에서 성별/연령(`male4070`)과 프로모션 브랜드명(`yezac`)을 독립된 컬럼으로 자동 분리하는 로직을 지금 파이썬 스크립트에 짜두어야 합니다. 이렇게 하면 "예작 브랜드의 ROAS", "4070 남성의 가입 CVR"을 버튼 한 번에 필터링할 수 있게 됩니다.
+3. **LTV 기반 [초저가 가입/유입군] 별도 태깅**: 구매 전환(CVR/ROAS)이 구리더라도, 클릭당 비용(CPC)이나 가입 CPA가 타 그룹 대비 '절반 이하'로 비정상적으로 싼 그룹이 가끔 튀어나옵니다. 이들은 Fail로 버리지 말고 추후 리타겟팅(RT)의 훌륭한 자양분이 되므로 **'저가 트래픽 확보군'**이라는 제 4의 태그로 별도 보존하는 로직을 제안합니다.
+
+### 2. 리포트 프롬프트 가이드 수정 ([analyze-performance.md](file:///c:/Users/ajh81/OneDrive/Desktop/joo-mkt/.claude/commands/analyze-performance.md))
+- **리포트 구조 (Top-Down 유지)**: 사용자의 선호에 맞춰 `Total(월간/주간/일간) -> 캠페인 유형별 -> 일반 상세 -> 그룹별 분석` 흐름의 거시적 → 미시적 뷰를 계속 유지.
+- **테이블 가독성 향상**: 캠페인 유형 및 그룹별 성과의 표를 `UA`와 `RT` 두 개로 물리적으로 쪼개어 가독성을 대폭 개선. 
+- **성공 기획전 발굴 (Potential 발굴 프레임워크)**: 
+  - 리포트 가이드라인 상에 퍼널(장바구니, CTR) 지표를 활용한 'Potential 승급' 로직 설명 추가.
+  - ***(안내)*** 실제 적용될 정확한 임계치(Threshold) 수치는 리포트가 완성된 후 실제 데이터를 보며 협의 및 확정 예정. 
+- **인사이트 작성 룰**: 장황한 서술형을 금지하고 단답형/들여쓰기 형태의 개조식으로만 작성하도록 엄격히 명시.
+- 담당자(카이) 영역인 **'일반 기획전'**에 대한 분석에 집중하고, SEL/PBTD 등 타 그룹 지표는 성과 대폭락 시에만 간략히 언급하도록 제한.
+
+### 3. 소재 리포트 분리 (Out of Scope for this task)
+- 크리에이티브 단위(소재) 분석 리포트는 본 리포트에 포함하지 않고, 별도의 목적(A/B 테스트 및 소재 피벗)을 띠는 마크다운 스크립트로 분리 추후 진행.
+
+---
+
+### 마크다운 리포트 재생성 ([marketing/reports/weekly-performance-2026-W12.md](file:///c:/Users/ajh81/OneDrive/Desktop/joo-mkt/marketing/reports/weekly-performance-2026-W12.md))
+- 변경된 스크립트 기반으로 전처리를 수행하고, 새로운 뷰(UA/RT 쪼개짐, 퍼널 데이터 추가, 개조식 인사이트)로 W12 보고서 다시 작성.
+
+## Verification Plan
+
+### Automated Tests
+- `python marketing/scripts/preprocess-airbridge.py --type weekly` 정상 실행 및 수정된 명칭(`UA-일반`) 정상 반영 확인.
+- 생성된 [weekly-adgroup.csv](file:///c:/Users/ajh81/OneDrive/Desktop/joo-mkt/outputs/processed/weekly-adgroup.csv) 내에 매체 지표(CPC, CTR)의 raw cost 기반 정확성 확인.
+
+### Manual Verification
+- 구조화된 가이드 문서(.md)와 산출된 W12 보고서를 나란히 비교하여 UA/RT 분리, 단답식 인사이트 표기가 확실히 반영되었는지 육안 점검.

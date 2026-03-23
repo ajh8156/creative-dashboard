@@ -1,0 +1,89 @@
+=== 1. 데이터 기본 정보 ===
+전체 행 수: 412,642
+전체 열 수: 30
+
+=== 캠페인유형 분포 ===
+캠페인유형
+일반-RT            148079
+일반-UA             94835
+PBTD-RT           66463
+SEL-RT            49386
+SEL-UA            35947
+PBTD-UA            8490
+AD-PBTD            5424
+카탈로그-RT            3157
+일반-UA-Traffic       643
+일반-RT-Traffic       203
+미분류                  15
+Name: count, dtype: int64
+
+일반-RT/일반-UA 필터링 후 행 수: 242,914
+
+=== 1. Ad Group 고유값 샘플 20개 (캠페인유형: 일반-RT, 일반-UA) ===
+총 고유 Ad Group 수: 321
+1. male3569-2602_br_saintnine-promotion
+2. male3564-2602_br_underarmourgolf-promotion
+3. male4064-2601_br_jdx-promotion
+4. male3064-2601_br_spyder-promotion
+5. male4570-2602_br_mountia-promotion
+6. male3054-2601_br_bon-promotion
+7. male3564-2601_br_saintnine-promotion
+8. male3064-bigluck_br_spyder-promotion
+9. male3564-2601_br_disney_sparksgolf-promotion
+10. male3570-2601_ct_nplus1-promotion
+11. male4070-br_pingfantom-promotion
+12. male3064-2601_br_network_spyder-promotion
+13. demo_male_saletap
+14. male3564-2602_ct_newfestival4-promotion
+15. male4070-2602_br_lynx-promotion
+16. male3059-2602_br_sieg-promotion
+17. male3564-2602_br_intercrew-promotion
+18. female3064-2602_br_adidaswoman-promotion
+19. male4070-2026_theathler1_renomahomme
+20. male3564-4890477-product
+
+=== 2. Ad Creative 고유값 샘플 20개 (캠페인유형: 일반-RT, 일반-UA) ===
+총 고유 Ad Creative 수: 1,450
+1. 260219-img-single-sku_model_3
+2. 2602012-img-single-sku_n_8
+3. 5
+4. 260209-img-single-log_n_10
+5. 260223-img-single-sku_multi_5
+6. 260205-img-single-sku_two_2
+7. 260127-img-single-sku_disc_2
+8. 260202-img-single-sku_multi_3_34
+9. 260211-img-single-sku_single_4
+10. 260226-img-single_sku_one_2_c
+11. 260213-img-single
+12. 260212-img-single-log_logo_6
+13. 260212-img-single-sku_multi_3_11
+14. 260202-img-single-sku_two_2
+15. 260302_saletap
+16. 260225-img-single-sku_multi_3_c
+17. 260127-img-single-sku_disc_3
+18. 260206-img-single-sku_one_3
+19. 260213-img-single-sku_single_5
+20. 260225-img-single-sku_model_12_r
+
+=== 3. 캠페인유형별 고유 Ad Group 및 Ad Creative 수 ===
+일반-RT:
+  - 고유 Ad Group 수: 246
+  - 고유 Ad Creative 수: 1,307
+
+일반-UA:
+  - 고유 Ad Group 수: 210
+  - 고유 Ad Creative 수: 1,039
+
+=== 4. W11 기간 분석 (2026-03-09 ~ 2026-03-15) ===
+W11 기간 전체 행 수: 93,276
+
+일반-RT (W11):
+  - 행 수: 17,429
+  - 고유 Ad Group 수: 93
+  - 고유 Ad Creative 수: 449
+
+일반-UA (W11):
+  - 행 수: 16,698
+  - 고유 Ad Group 수: 76
+  - 고유 Ad Creative 수: 375
+

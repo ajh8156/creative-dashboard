@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.env
+
+# Data (Security & Size)
+outputs/processed/**/*.csv
+# .parquet 파일은 대시보드 구동을 위해 포함(필요 시 제외 설정 변경 가능)
+marketing/raw-data/
+
+# Bootcamp 대용량 데이터 (GitHub 100MB 제한 초과)
+bootcamp/data/*.csv
+bootcamp/data/**/*.csv
+
+# IDE / Tools
+.claude/
+.vscode/
+
+# Temporary files
+tmp_*.py
+cols.txt
