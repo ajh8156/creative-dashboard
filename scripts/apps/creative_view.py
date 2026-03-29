@@ -16,28 +16,21 @@ st.set_page_config(page_title="Growth Creative Dashboard v5", layout="wide")
 
 # === 경로 설정 (로컬 및 클라우드 배포 통합) ===
 CUR_DIR = Path(__file__).resolve().parent
+BASE_DIR = CUR_DIR.parent.parent
 
 # 1. 데이터 디렉토리 설정
-# 로컬: marketing/dashboards/ → 2단계 상위 = joo-mkt/outputs/processed/dashboard/
-# 배포(Streamlit Cloud): 루트에 parquet이 직접 있는 flat 구조
-if (CUR_DIR.parent.parent / "outputs" / "processed" / "dashboard").exists():
-    DATA_DIR = CUR_DIR.parent.parent / "outputs" / "processed" / "dashboard"
-elif (CUR_DIR / "outputs" / "processed" / "dashboard").exists():
-    DATA_DIR = CUR_DIR / "outputs" / "processed" / "dashboard"
-elif (CUR_DIR / "kakao_dashboard_final_v4.parquet").exists():
-    # GitHub 루트에 파일이 직접 있는 경우 (Streamlit Cloud 배포)
-    DATA_DIR = CUR_DIR
-else:
-    DATA_DIR = CUR_DIR.parent.parent / "outputs" / "processed"
+# joo-mkt/data/processed/dashboard/
+DATA_DIR = BASE_DIR / "data" / "processed" / "dashboard"
+CONFIG_DIR = BASE_DIR / "docs" / "taxonomy"
 
 CLEANED_DATA_PATH = DATA_DIR / "kakao_cleaned.csv"
 CACHE_PATH = DATA_DIR / "kakao_dashboard_final_v4.parquet"
 
 # 2. 파일 경로 설정
-MEMO_PATH = CUR_DIR / "memo.md"
-ACTION_LOG_PATH = CUR_DIR / "action_log.json"
-WINNING_HISTORY_PATH = CUR_DIR / "winning_history.json"
-AB_MEMO_PATH = CUR_DIR / "ab_memo.json"
+MEMO_PATH = CONFIG_DIR / "memo.md"
+ACTION_LOG_PATH = CONFIG_DIR / "action_log.json"
+WINNING_HISTORY_PATH = CONFIG_DIR / "winning_history.json"
+AB_MEMO_PATH = CONFIG_DIR / "ab_memo.json"
 
 # === 상수 ===
 NUM_COLS = ['cost', 'revenue', 'purchases', 'clicks', 'impressions', 'cart', 'option_comp']

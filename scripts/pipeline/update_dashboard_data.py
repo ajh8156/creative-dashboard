@@ -5,10 +5,10 @@ import re
 import os
 
 # === 경로 설정 (프로젝트 루트 기준) ===
-# marketing/scripts/pipeline/ → 3단계 상위 = joo-mkt/
+# scripts/pipeline/ → 3단계 상위 = joo-mkt/
 CUR_DIR = Path(__file__).resolve().parent
-BASE_DIR = CUR_DIR.parent.parent.parent  # joo-mkt 루트
-DATA_DIR = BASE_DIR / "outputs" / "processed" / "dashboard"
+BASE_DIR = CUR_DIR.parent.parent  # scripts/pipeline/ → scripts/ → joo-mkt/
+DATA_DIR = BASE_DIR / "data" / "processed" / "dashboard"
 CLEANED_DATA_PATH = DATA_DIR / "kakao_cleaned.csv"
 CACHE_PATH = DATA_DIR / "kakao_dashboard_final_v4.parquet"
 
@@ -16,10 +16,10 @@ def update_parquet_data():
     """creative_view.py에서 사용하는 전처리 로직을 실행하여 Parquet 파일을 최신화합니다."""
     
     if not CLEANED_DATA_PATH.exists():
-        print(f"❌ 원본 CSV 파일({CLEANED_DATA_PATH.name})이 존재하지 않습니다. 전처리를 먼저 수행하세요.")
+        print(f"[오류] 원본 CSV 파일({CLEANED_DATA_PATH.name})이 존재하지 않습니다. 전처리를 먼저 수행하세요.")
         return
 
-    print(f"🚀 대시보드용 데이터 가공 중... ({CLEANED_DATA_PATH.name} -> {CACHE_PATH.name})")
+    print(f"[시작] 대시보드용 데이터 가공 중... ({CLEANED_DATA_PATH.name} -> {CACHE_PATH.name})")
     
     # 컬럼 정의
     cols = [
@@ -107,7 +107,7 @@ def update_parquet_data():
 
     # 저장
     df.to_parquet(CACHE_PATH, engine='pyarrow')
-    print(f"✅ 데이터 가공 완료: {CACHE_PATH}")
+    print(f"[완료] 데이터 가공 완료: {CACHE_PATH}")
 
 if __name__ == "__main__":
     update_parquet_data()
