@@ -3,7 +3,3 @@ pandas
 numpy
 plotly
 pyarrow
-requests
-python-dotenv
-markdown
-xhtml2pdf
