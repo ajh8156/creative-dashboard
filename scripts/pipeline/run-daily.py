@@ -6,8 +6,10 @@
   2. 전처리 (preprocess-airbridge.py) → data/processed/pipeline/*.csv 4개
   3. 주간 리포트 생성 (generate-weekly-report.py)
   4. 소재 리포트 생성 (generate-creative-report.py)
-  5. 대시보드 데이터 업데이트 (update_dashboard_data.py)
-  6. 노션 자동 업로드 (주간 + 소재 리포트)
+  5. 주간 리포트 인사이트 자동 작성 (fill-insights.py) — Claude API
+  6. 소재 리포트 인사이트 자동 작성 (fill-insights.py) — Claude API
+  7. 대시보드 데이터 업데이트 (update_dashboard_data.py)
+  8. 노션 자동 업로드 (주간 + 소재 리포트)
 
 사용법:
   python scripts/pipeline/run-daily.py
@@ -101,8 +103,32 @@ def generate_creative_report():
     return run_command(cmd, "소재 리포트 생성 (generate-creative-report.py)")
 
 
+def fill_weekly_insights():
+    """Step 5: 주간 리포트 인사이트 자동 작성"""
+    cmd = [
+        sys.executable,
+        str(PIPELINE_DIR / "fill-insights.py"),
+        "--report-type", "weekly",
+        "--latest"
+    ]
+
+    return run_command(cmd, "주간 리포트 인사이트 작성 (fill-insights.py)")
+
+
+def fill_creative_insights():
+    """Step 6: 소재 리포트 인사이트 자동 작성"""
+    cmd = [
+        sys.executable,
+        str(PIPELINE_DIR / "fill-insights.py"),
+        "--report-type", "creative",
+        "--latest"
+    ]
+
+    return run_command(cmd, "소재 리포트 인사이트 작성 (fill-insights.py)")
+
+
 def update_dashboard():
-    """Step 5: 대시보드 데이터 업데이트"""
+    """Step 7: 대시보드 데이터 업데이트"""
     cmd = [
         sys.executable,
         str(PIPELINE_DIR / "update_dashboard_data.py")
@@ -112,7 +138,7 @@ def update_dashboard():
 
 
 def upload_to_notion():
-    """Step 6: 노션에 자동 업로드"""
+    """Step 8: 노션에 자동 업로드"""
     log("노션 업로드 시작...")
 
     try:
@@ -170,11 +196,19 @@ def main():
     if not generate_creative_report():
         log("소재 리포트 생성 실패 → 계속 진행", level="WARN")
 
-    # Step 5: 대시보드 업데이트
+    # Step 5: 주간 리포트 인사이트
+    if not fill_weekly_insights():
+        log("주간 인사이트 작성 실패 → 계속 진행", level="WARN")
+
+    # Step 6: 소재 리포트 인사이트
+    if not fill_creative_insights():
+        log("소재 인사이트 작성 실패 → 계속 진행", level="WARN")
+
+    # Step 7: 대시보드 업데이트
     if not update_dashboard():
         log("대시보드 업데이트 실패 → 계속 진행", level="WARN")
 
-    # Step 6: 노션 업로드
+    # Step 8: 노션 업로드
     if not args.skip_notion:
         upload_to_notion()
 
